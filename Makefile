@@ -1,17 +1,17 @@
 FLAGS =
 TESTENVVAR =
-REGISTRY = quay.io/redhat
-TAG = $(shell git describe --abbrev=0)
+REGISTRY = spc35771
+TAG = latest
 PKGS = $(shell go list ./... | grep -v /vendor/)
 ARCH ?= $(shell go env GOARCH)
 BuildDate = $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 Commit = $(shell git rev-parse --short HEAD)
 ALL_ARCH = amd64 arm arm64 ppc64le s390x
-PKG=github.com/openshift/openshift-state-metrics/pkg
+PKG=github.com/snapp-cab/openshift-state-metrics/pkg
 GO_VERSION=1.11
 
 IMAGE = $(REGISTRY)/openshift-state-metrics
-MULTI_ARCH_IMG = $(IMAGE)-$(ARCH)
+MULTI_ARCH_IMG = $(IMAGE)
 
 gofmtcheck:
 	@go fmt $(PKGS) | grep ".*\.go"; if [ "$$?" = "0" ]; then exit 1; fi
@@ -36,7 +36,7 @@ all-push: $(addprefix sub-push-,$(ALL_ARCH))
 
 container: .container-$(ARCH)
 .container-$(ARCH):
-	docker run --rm -v "$$PWD":/go/src/github.com/openshift/openshift-state-metrics -w /go/src/github.com/openshift/openshift-state-metrics -e GOOS=linux -e GOARCH=$(ARCH) -e CGO_ENABLED=0 golang:${GO_VERSION} go build -ldflags "-s -w -X ${PKG}/version.Release=${TAG} -X ${PKG}/version.Commit=${Commit} -X ${PKG}/version.BuildDate=${BuildDate}" -o openshift-state-metrics
+	docker run --rm -v "$$PWD":/go/src/github.com/snapp-cab/openshift-state-metrics -w /go/src/github.com/snapp-cab/openshift-state-metrics -e GOOS=linux -e GOARCH=$(ARCH) -e CGO_ENABLED=0 golang:${GO_VERSION} go build -ldflags "-s -w -X ${PKG}/version.Release=${TAG} -X ${PKG}/version.Commit=${Commit} -X ${PKG}/version.BuildDate=${BuildDate}" -o openshift-state-metrics
 	cp -r * $(TEMP_DIR)
 	docker build -t $(MULTI_ARCH_IMG):$(TAG) $(TEMP_DIR)
 	docker tag $(MULTI_ARCH_IMG):$(TAG) $(MULTI_ARCH_IMG):latest

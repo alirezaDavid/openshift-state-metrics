@@ -1,5 +1,5 @@
 FROM registry.svc.ci.openshift.org/openshift/release:golang-1.10 AS builder
-WORKDIR /go/src/github.com/openshift/openshift-state-metrics
+WORKDIR /go/src/github.com/snapp-cab/openshift-state-metrics
 COPY . .
 RUN make build
 
@@ -9,7 +9,7 @@ LABEL io.k8s.display-name="openshift-state-metrics" \
       io.openshift.tags="OpenShift" \
       maintainer="Haoran Wang <haowang@redhat.com>"
 
-ARG FROM_DIRECTORY=/go/src/github.com/openshift/openshift-state-metrics
+ARG FROM_DIRECTORY=/go/src/github.com/snapp-cab/openshift-state-metrics
 COPY --from=builder ${FROM_DIRECTORY}/openshift-state-metrics  /usr/bin/openshift-state-metrics
 
 USER nobody
