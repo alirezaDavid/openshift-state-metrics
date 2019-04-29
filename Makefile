@@ -1,7 +1,7 @@
 FLAGS =
 TESTENVVAR =
-REGISTRY = quay.io/redhat
-TAG = $(shell git describe --abbrev=0)
+REGISTRY = registry.apps.private.ts-1.staging-snappcloud.io/monitoring
+TAG = latest
 PKGS = $(shell go list ./... | grep -v /vendor/)
 ARCH ?= $(shell go env GOARCH)
 BuildDate = $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
@@ -11,7 +11,7 @@ PKG=github.com/openshift/openshift-state-metrics/pkg
 GO_VERSION=1.11
 
 IMAGE = $(REGISTRY)/openshift-state-metrics
-MULTI_ARCH_IMG = $(IMAGE)-$(ARCH)
+MULTI_ARCH_IMG = $(IMAGE)
 
 gofmtcheck:
 	@go fmt $(PKGS) | grep ".*\.go"; if [ "$$?" = "0" ]; then exit 1; fi

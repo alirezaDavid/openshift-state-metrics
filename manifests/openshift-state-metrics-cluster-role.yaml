@@ -15,5 +15,5 @@ rules:
   verbs: ["list", "watch"]
 - apiGroups: ["quota.openshift.io"]
   resources:
-  - clusterresourcequota
+  - clusterresourcequotas
   verbs: ["list", "watch"]
