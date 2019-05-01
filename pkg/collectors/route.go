@@ -11,7 +11,6 @@ import (
 
 	"github.com/golang/glog"
 
-	"github.com/openshift/api/route/v1"
 	routeclient "github.com/openshift/client-go/route/clientset/versioned"
 )
 
@@ -43,33 +42,33 @@ var (
 			Help: "Information about route.",
 			GenerateFunc: wrapRouteFunc(func(d *v1.Route) metric.Family {
 				f := metric.Family{}
-        var termination string
+				var termination string
 				for _, m := range d.Status.Ingress {
-            if d.Spec.TLS != nil {
-              termination = string(d.Spec.TLS.Termination)
-            } else {
-              termination = ""
-            }
+					if d.Spec.TLS != nil {
+						termination = string(d.Spec.TLS.Termination)
+					} else {
+						termination = ""
+					}
 					for _, n := range m.Conditions {
 						f.Metrics = append(f.Metrics, &metric.Metric{
-              LabelKeys: []string{"host_name", "tls_termination", "to_kind", "to_name", "router_name", "conditaion_type", "status"},
-              LabelValues: []string{
-                d.Spec.Host, 
-                termination, 
-                d.Spec.To.Kind, 
-                d.Spec.To.Name, 
-                m.RouterName, 
-                string(n.Type), 
-                string(n.Status),
-              },
-              Value: 1,
+							LabelKeys: []string{"host_name", "tls_termination", "to_kind", "to_name", "router_name", "conditaion_type", "status"},
+							LabelValues: []string{
+								d.Spec.Host,
+								termination,
+								d.Spec.To.Kind,
+								d.Spec.To.Name,
+								m.RouterName,
+								string(n.Type),
+								string(n.Status),
+							},
+							Value: 1,
 						})
 					}
-        }
-        
-        return f
+				}
+
+				return f
 			}),
-		},	
+		},
 		metric.FamilyGenerator{
 			Name: descRouteLabelsName,
 			Type: metric.MetricTypeGauge,
